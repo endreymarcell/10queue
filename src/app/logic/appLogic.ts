@@ -1,4 +1,4 @@
-import { createLogic, Store } from "@endreymarcell/logical"
+import { createLogic, createSideEffects, Store } from "@endreymarcell/logical"
 import { deleteTaskAndFixFocus, moveFocusSafely, moveTaskWithFocus, startAddingTaskSafely } from "./logicHelpers"
 
 export type State = {
@@ -9,7 +9,7 @@ export type State = {
 }
 
 const initialState: State = {
-  tasks: ["foo", "bar", "baz"],
+  tasks: [],
   focusedTaskIndex: 0,
   addingTaskAtIndex: null,
   editingTaskAtIndex: null,
@@ -17,7 +17,33 @@ const initialState: State = {
 
 export const store = new Store(initialState)
 
+const sideEffects = createSideEffects<State>()({
+  setupAutosave: [
+    (intervalSeconds: number) => Promise.resolve(setInterval(() => dispatcher.saveRequested(), intervalSeconds * 1000)),
+    () => () => {},
+    () => () => {},
+  ],
+  saveState: [
+    (tasks: string) => {
+      window.localStorage.setItem("10Q-saved-tasks", tasks)
+      return Promise.resolve()
+    },
+    () => () => {},
+    () => () => {},
+  ],
+  loadState: [
+    () => Promise.resolve(JSON.parse(window.localStorage.getItem("10Q-saved-tasks")) ?? []),
+    (tasks: Array<string>) => (state) => void (state.tasks = tasks),
+    () => () => {},
+  ],
+})
+
 const logic = createLogic<State>()({
+  // general
+  init: () => () => sideEffects.setupAutosave(5),
+  // TODO
+  loadPersistedState: () => () => sideEffects.loadState(),
+
   // focus
   focusTaskRequested: (index: number) => (state) => void (state.focusedTaskIndex = index),
   moveFocusUpRequested: () => (state) => moveFocusSafely(state, "up"),
@@ -50,6 +76,10 @@ const logic = createLogic<State>()({
       state.tasks.splice(0, 1)
     }
   },
+
+  // persistance
+  saveRequested: () => (state) => sideEffects.saveState(JSON.stringify(state.tasks)),
+  loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
 })
 
-export const dispatcher = store.getDispatcher()(logic)
+export const dispatcher = store.getDispatcher()(logic, sideEffects)

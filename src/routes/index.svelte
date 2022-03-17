@@ -1,6 +1,13 @@
 <script>
+  import { onMount } from "svelte"
   import "../global.css"
   import Queue from "../app/parts/queue/Queue.svelte"
+  import { dispatcher } from "../app/logic/appLogic"
+
+  onMount(() => {
+    dispatcher.init()
+    dispatcher.loadPersistedState()
+  })
 </script>
 
 <svelte:head>
