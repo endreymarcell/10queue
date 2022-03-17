@@ -8,24 +8,23 @@
   $: isFocused = $store.focusedTaskIndex === index
   $: isFirst = index === 0
   $: isLast = index === $store.tasks.length - 1
-
-  let isEditing = false
+  $: isEditing = $store.editingTaskAtIndex === index
 
   function onClick() {
     dispatcher.focusTaskRequested(index)
   }
 
   function onEditTaskClicked() {
-    isEditing = true
+    dispatcher.editTaskClicked(index)
   }
 
   function onInputFinish(newValue: string) {
     dispatcher.taskTitleChanged(index, newValue)
-    isEditing = false
+    dispatcher.editingTaskFinished()
   }
 
   function onInputCancel() {
-    isEditing = false
+    dispatcher.editingTaskFinished()
   }
 
   function onMoveUpClicked() {
@@ -51,12 +50,12 @@
       use:onTextInputCancel={onInputCancel}
     />
   {:else}
-    <div class="task-row" class:focused={isFocused} on:click={onClick}>
+    <div class="task-row" class:focused={isFocused}>
       <div class="task-options options-before">
         <div class="option-move-up" class:disabled={isFirst} on:click={onMoveUpClicked}>(up)</div>
         <div class="option-move-down" class:disabled={isLast} on:click={onMoveDownClicked}>(down)</div>
       </div>
-      <div class="task-body">
+      <div class="task-body" on:click={onClick}>
         <div class="task-index">{index + 1}.</div>
         <div class="task-title">{task}</div>
       </div>

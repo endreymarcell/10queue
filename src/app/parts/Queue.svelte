@@ -2,20 +2,28 @@
   import TaskRow from "../components/TaskRow.svelte"
   import { dispatcher, store } from "../logic/appLogic"
 
+  const shortcutMap = new Map(
+    Object.entries({
+      j: () => dispatcher.moveFocusDownRequested(),
+      k: () => dispatcher.moveFocusUpRequested(),
+      d: () => dispatcher.deleteFocusedTaskRequested(),
+      e: () => dispatcher.editFocusedTaskRequested(),
+      J: () => dispatcher.moveFocusedTaskDownRequested(),
+      K: () => dispatcher.moveFocusedTaskUpRequested(),
+      o: () => dispatcher.addTaskAfterFocusedRequested(),
+      O: () => dispatcher.addTaskBeforeFocusedRequested(),
+    })
+  )
+
   function queueShortcuts(_: HTMLElement) {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "j") {
-        dispatcher.moveFocusDownRequested()
-      } else if (event.key === "k") {
-        dispatcher.moveFocusUpRequested()
-      } else if (event.key === "d") {
-        dispatcher.deleteFocusedTaskRequested()
-      } else if (event.key === "e") {
-        dispatcher.editFocusedTaskRequested()
-      } else if (event.key === "J") {
-        dispatcher.moveFocusedTaskDownRequested()
-      } else if (event.key === "K") {
-        dispatcher.moveFocusedTaskUpRequested()
+      if ($store.editingTaskAtIndex !== null) {
+        // do not handle key events while editing
+        return
+      }
+      if (shortcutMap.has(event.key)) {
+        event.preventDefault()
+        shortcutMap.get(event.key)()
       }
     }
     window.addEventListener("keydown", onKeyDown)

@@ -1,18 +1,18 @@
 import { createLogic, Store } from "@endreymarcell/logical"
-import { deleteTaskAndFixFocus, moveTaskWithFocus } from "./logicHelpers"
+import { deleteTaskAndFixFocus, moveFocusSafely, moveTaskWithFocus, startAddingTaskSafely } from "./logicHelpers"
 
 export type State = {
   tasks: Array<string>
   focusedTaskIndex: number
-  isAddingTask: boolean
-  isEditing: boolean
+  addingTaskAtIndex: number | null
+  editingTaskAtIndex: number | null
 }
 
 const initialState: State = {
   tasks: ["foo", "bar", "baz"],
   focusedTaskIndex: 0,
-  isAddingTask: false,
-  isEditing: false,
+  addingTaskAtIndex: null,
+  editingTaskAtIndex: null,
 }
 
 export const store = new Store(initialState)
@@ -20,16 +20,18 @@ export const store = new Store(initialState)
 const logic = createLogic<State>()({
   // focus
   focusTaskRequested: (index: number) => (state) => void (state.focusedTaskIndex = index),
-  moveFocusUpRequested: () => (state) => void (state.focusedTaskIndex = Math.max(0, state.focusedTaskIndex - 1)),
-  moveFocusDownRequested: () => (state) =>
-    void (state.focusedTaskIndex = Math.min(state.tasks.length - 1, state.focusedTaskIndex + 1)),
+  moveFocusUpRequested: () => (state) => moveFocusSafely(state, "up"),
+  moveFocusDownRequested: () => (state) => moveFocusSafely(state, "down"),
 
   // add
-  addTaskRequested: () => (state) => void (state.isAddingTask = true),
+  addTaskRequested: (atIndex: number) => (state) => startAddingTaskSafely(state, atIndex),
+  addTaskBeforeFocusedRequested: () => (state) => startAddingTaskSafely(state, state.focusedTaskIndex),
+  addTaskAfterFocusedRequested: () => (state) => startAddingTaskSafely(state, state.focusedTaskIndex + 1),
 
   // edit
-  editTaskClicked: (index: number) => (state) => void (state.isEditing = true),
-  editFocusedTaskRequested: () => (state) => void (state.isEditing = true),
+  editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
+  editFocusedTaskRequested: () => (state) => void (state.editingTaskAtIndex = state.focusedTaskIndex),
+  editingTaskFinished: () => (state) => void (state.editingTaskAtIndex = null),
   taskTitleChanged: (index: number, newTitle: string) => (state) => void (state.tasks[index] = newTitle),
 
   // delete
