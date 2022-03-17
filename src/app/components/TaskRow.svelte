@@ -3,7 +3,7 @@
   import { focusOnMount, setInputValueOnMount, onTextInputFinish, onTextInputCancel } from "../actions"
   import IconUp from "../icons/IconUp.svelte"
   import IconDown from "../icons/IconDown.svelte"
-  import IconFinish from "../icons/IconFinish.svelte"
+  import IconComplete from "../icons/IconComplete.svelte"
   import IconEdit from "../icons/IconEdit.svelte"
   import IconDelete from "../icons/IconDelete.svelte"
 
@@ -52,9 +52,9 @@
       {/if}
     </div>
     <div class="task-options options-after">
-      <div class="option" id="option-finish">
+      <div class="option" id="option-complete">
         {#if isFirst}
-          <IconFinish />
+          <IconComplete />
         {/if}
       </div>
       <div class="option" id="option-edit" on:click={onEditTaskClicked}>
