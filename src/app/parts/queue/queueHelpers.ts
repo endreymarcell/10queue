@@ -13,5 +13,6 @@ export const shortcutMap = new Map(
     K: () => dispatcher.moveFocusedTaskUpRequested(),
     o: () => dispatcher.addTaskAfterFocusedRequested(),
     O: () => dispatcher.addTaskBeforeFocusedRequested(),
+    s: () => dispatcher.saveRequested(),
   })
 )

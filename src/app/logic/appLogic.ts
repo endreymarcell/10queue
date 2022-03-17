@@ -6,6 +6,7 @@ export type State = {
   focusedTaskIndex: number
   addingTaskAtIndex: number | null
   editingTaskAtIndex: number | null
+  hasUnsavedChanged: boolean
 }
 
 const initialState: State = {
@@ -13,6 +14,7 @@ const initialState: State = {
   focusedTaskIndex: 0,
   addingTaskAtIndex: null,
   editingTaskAtIndex: null,
+  hasUnsavedChanged: true,
 }
 
 export const store = new Store(initialState)
@@ -41,7 +43,6 @@ const sideEffects = createSideEffects<State>()({
 const logic = createLogic<State>()({
   // general
   init: () => () => sideEffects.setupAutosave(5),
-  // TODO
   loadPersistedState: () => () => sideEffects.loadState(),
 
   // focus
@@ -78,7 +79,7 @@ const logic = createLogic<State>()({
   },
 
   // persistance
-  saveRequested: () => (state) => sideEffects.saveState(JSON.stringify(state.tasks)),
+  saveRequested: () => (state) => state.hasUnsavedChanged ? sideEffects.saveState(JSON.stringify(state.tasks)) : null,
   loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
 })
 

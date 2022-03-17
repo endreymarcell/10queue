@@ -2,7 +2,7 @@
   import { onMount } from "svelte"
   import "../global.css"
   import Queue from "../app/parts/queue/Queue.svelte"
-  import { dispatcher } from "../app/logic/appLogic"
+  import { dispatcher, store } from "../app/logic/appLogic"
 
   onMount(() => {
     dispatcher.init()
@@ -15,7 +15,7 @@
 </svelte:head>
 
 <div id="body">
-  <h1>Task queue</h1>
+  <h1>Task queue{$store.hasUnsavedChanged ? "*" : ""}</h1>
   <Queue />
 </div>
 
