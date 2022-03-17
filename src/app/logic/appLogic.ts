@@ -43,6 +43,9 @@ const logic = createLogic<State>()({
   moveFocusedTaskUpRequested: () => (state) => moveTaskWithFocus(state, state.focusedTaskIndex, "up"),
   moveTaskDownRequested: (index: number) => (state) => moveTaskWithFocus(state, index, "down"),
   moveFocusedTaskDownRequested: () => (state) => moveTaskWithFocus(state, state.focusedTaskIndex, "down"),
+
+  // finish
+  finishTask: () => (state) => void state.tasks.splice(0, 1),
 })
 
 export const dispatcher = store.getDispatcher()(logic)

@@ -34,3 +34,27 @@ export function onTextInputCancel(node: HTMLInputElement, onCancel: () => void) 
     },
   }
 }
+
+type Callback = () => void
+
+export function keyboardShortcuts(
+  _: HTMLElement,
+  params: {
+    shortcuts: Map<string, Callback>
+    getEnabledStatus?: () => boolean
+  }
+) {
+  const { shortcuts, getEnabledStatus } = params
+  const onKeyDown = (event) => {
+    if (getEnabledStatus != null && !getEnabledStatus()) {
+      return
+    } else if (shortcuts.has(event.key)) {
+      event.preventDefault()
+      shortcuts.get(event.key)()
+    }
+  }
+  window.addEventListener("keydown", onKeyDown)
+  return {
+    destroy: () => window.removeEventListener("keydown", onKeyDown),
+  }
+}
