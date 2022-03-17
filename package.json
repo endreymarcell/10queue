@@ -25,6 +25,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@endreymarcell/logical": "^0.1.10",
     "firebase": "^9.6.8"
   }
 }
