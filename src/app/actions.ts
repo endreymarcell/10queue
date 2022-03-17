@@ -9,6 +9,7 @@ export function setInputValueOnMount(node: HTMLInputElement, value: string) {
 export function onTextInputFinish(node: HTMLInputElement, onFinish: (newValue: string) => void) {
   const onKeyDown = (event) => {
     if (event.key === "Enter") {
+      event.stopPropagation()
       onFinish(node.value)
     }
   }
