@@ -45,7 +45,7 @@ const logic = createLogic<State>()({
   moveFocusedTaskDownRequested: () => (state) => moveTaskWithFocus(state, state.focusedTaskIndex, "down"),
 
   // complete
-  completeTask: () => (state) => {
+  completeRunningTaskRequested: () => (state) => {
     if (state.focusedTaskIndex === 0) {
       state.tasks.splice(0, 1)
     }

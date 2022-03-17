@@ -24,6 +24,7 @@
   const onInputCancel = () => dispatcher.editingTaskFinished()
   const onMoveUpClicked = () => dispatcher.moveTaskUpRequested(index)
   const onMoveDownClicked = () => dispatcher.moveTaskDownRequested(index)
+  const onCompleteClicked = () => dispatcher.completeRunningTaskRequested()
   const onDeleteClicked = () => dispatcher.deleteTaskClicked(index)
 </script>
 
@@ -52,7 +53,7 @@
       {/if}
     </div>
     <div class="task-options options-after">
-      <div class="option" id="option-complete">
+      <div class="option" id="option-complete" on:click={onCompleteClicked}>
         {#if isFirst}
           <IconComplete />
         {/if}
