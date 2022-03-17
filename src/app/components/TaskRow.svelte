@@ -95,10 +95,6 @@
     background-color: gold;
   }
 
-  .task-row.focused .option {
-    opacity: 1;
-  }
-
   .task-body {
     display: flex;
   }
