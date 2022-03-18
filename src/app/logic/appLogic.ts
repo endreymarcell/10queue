@@ -1,4 +1,4 @@
-import { createLogic, createSideEffects, Store } from "@endreymarcell/logical"
+import { createLogic, createSideEffects, Store, noop } from "@endreymarcell/logical"
 import {
   deleteTaskAndFixFocus,
   moveFocusSafely,
@@ -28,21 +28,21 @@ export const store = new Store(initialState)
 const sideEffects = createSideEffects<State>()({
   setupAutosave: [
     (intervalSeconds: number) => Promise.resolve(setInterval(() => dispatcher.saveRequested(), intervalSeconds * 1000)),
-    () => () => {},
-    () => () => {},
+    noop,
+    noop,
   ],
   saveState: [
     (tasks: string) => {
       window.localStorage.setItem("10Q-saved-tasks", tasks)
       return Promise.resolve()
     },
-    () => () => {},
-    () => () => {},
+    noop,
+    noop,
   ],
   loadState: [
     () => Promise.resolve(JSON.parse(window.localStorage.getItem("10Q-saved-tasks")) ?? []),
     (tasks: Array<string>) => (state) => void (state.tasks = tasks),
-    () => () => {},
+    noop,
   ],
 })
 
