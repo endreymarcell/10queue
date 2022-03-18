@@ -31,3 +31,7 @@ export function startAddingTaskSafely(state: State, index: number) {
   state.editingTaskAtIndex = index
   state.focusedTaskIndex = index
 }
+
+export function serializeState(state: State) {
+  return JSON.stringify(state.tasks)
+}

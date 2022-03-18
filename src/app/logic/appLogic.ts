@@ -1,5 +1,11 @@
 import { createLogic, createSideEffects, Store } from "@endreymarcell/logical"
-import { deleteTaskAndFixFocus, moveFocusSafely, moveTaskWithFocus, startAddingTaskSafely } from "./logicHelpers"
+import {
+  deleteTaskAndFixFocus,
+  moveFocusSafely,
+  moveTaskWithFocus,
+  serializeState,
+  startAddingTaskSafely,
+} from "./logicHelpers"
 
 export type State = {
   tasks: Array<string>
@@ -79,7 +85,7 @@ const logic = createLogic<State>()({
   },
 
   // persistance
-  saveRequested: () => (state) => state.hasUnsavedChanged ? sideEffects.saveState(JSON.stringify(state.tasks)) : null,
+  saveRequested: () => (state) => state.hasUnsavedChanged ? sideEffects.saveState(serializeState(state)) : null,
   loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
 })
 
