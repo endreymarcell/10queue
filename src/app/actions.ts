@@ -7,7 +7,7 @@ export function setInputValueOnMount(node: HTMLInputElement, value: string) {
 }
 
 export function onTextInputFinish(node: HTMLInputElement, onFinish: (newValue: string) => void) {
-  const onKeyDown = (event) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       event.stopPropagation()
       onFinish(node.value)
@@ -20,7 +20,7 @@ export function onTextInputFinish(node: HTMLInputElement, onFinish: (newValue: s
 }
 
 export function onTextInputCancel(node: HTMLInputElement, onCancel: () => void) {
-  const onKeyDown = (event) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       onCancel()
     }
@@ -46,12 +46,15 @@ export function keyboardShortcuts(
   }
 ) {
   const { shortcuts, getEnabledStatus } = params
-  const onKeyDown = (event) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (getEnabledStatus != null && !getEnabledStatus()) {
       return
     } else if (shortcuts.has(event.key)) {
       event.preventDefault()
-      shortcuts.get(event.key)()
+      const callback = shortcuts.get(event.key)
+      if (callback !== undefined) {
+        callback()
+      }
     }
   }
   window.addEventListener("keydown", onKeyDown)
