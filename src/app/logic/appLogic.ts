@@ -2,6 +2,7 @@ import { createLogic, createSideEffects, Store, noop } from "@endreymarcell/logi
 import { LOCAL_STORAGE_KEY } from "../../utils/const"
 import {
   deleteTaskAndFixFocus,
+  handleDataChange,
   moveFocusSafely,
   moveTaskWithFocus,
   serializeState,
@@ -23,7 +24,7 @@ const initialState: State = {
   addingTaskAtIndex: null,
   editingTaskAtIndex: null,
   latestSavedState: "",
-  hasUnsavedChanged: true,
+  hasUnsavedChanged: false,
 }
 
 export const store = new Store(initialState)
@@ -41,7 +42,10 @@ const sideEffects = createSideEffects<State>()({
       window.localStorage.setItem(LOCAL_STORAGE_KEY, serializedState)
       return Promise.resolve(serializedState)
     },
-    (serializedState: string) => (state) => void (state.latestSavedState = serializedState),
+    (serializedState: string) => (state) => {
+      state.latestSavedState = serializedState
+      handleDataChange(state)
+    },
     noop,
   ],
   loadState: [
@@ -49,7 +53,10 @@ const sideEffects = createSideEffects<State>()({
       const savedTasks = window.localStorage.getItem(LOCAL_STORAGE_KEY)
       return Promise.resolve(savedTasks !== null ? savedTasks : "")
     },
-    (tasks: string) => (state) => void (state.tasks = JSON.parse(tasks)),
+    (tasks: string) => (state) => {
+      state.tasks = JSON.parse(tasks)
+      handleDataChange(state)
+    },
     noop,
   ],
 })
@@ -74,7 +81,10 @@ const logic = createLogic<State>()({
   editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
   editFocusedTaskRequested: () => (state) => void (state.editingTaskAtIndex = state.focusedTaskIndex),
   editingTaskFinished: () => (state) => void (state.editingTaskAtIndex = null),
-  taskTitleChanged: (index: number, newTitle: string) => (state) => void (state.tasks[index] = newTitle),
+  taskTitleChanged: (index: number, newTitle: string) => (state) => {
+    state.tasks[index] = newTitle
+    handleDataChange(state)
+  },
 
   // delete
   deleteTaskClicked: (index: number) => (state) => deleteTaskAndFixFocus(state, index),

@@ -7,11 +7,13 @@ export function moveTaskWithFocus(state: State, index: number, direction: "up" |
   }
   moveItemInArray(state.tasks, index, index + (direction === "up" ? -1 : 1))
   state.focusedTaskIndex += direction === "up" ? -1 : 1
+  handleDataChange(state)
 }
 
 export function deleteTaskAndFixFocus(state: State, index: number) {
   state.tasks.splice(index, 1)
   state.focusedTaskIndex = Math.min(state.tasks.length - 1, state.focusedTaskIndex)
+  handleDataChange(state)
 }
 
 export function moveFocusSafely(state: State, direction: "up" | "down") {
@@ -20,6 +22,7 @@ export function moveFocusSafely(state: State, direction: "up" | "down") {
   } else if (direction === "down" && state.focusedTaskIndex !== state.tasks.length - 1) {
     state.focusedTaskIndex++
   }
+  handleDataChange(state)
 }
 
 export function startAddingTaskSafely(state: State, index: number) {
@@ -37,4 +40,9 @@ export function startAddingTaskSafely(state: State, index: number) {
 
 export function serializeState(state: State) {
   return JSON.stringify(state.tasks)
+}
+
+export function handleDataChange(state: State) {
+  const serializedCurrentState = JSON.stringify(state.tasks)
+  state.hasUnsavedChanged = state.latestSavedState !== serializedCurrentState
 }
