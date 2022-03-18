@@ -1,4 +1,5 @@
 import { createLogic, createSideEffects, Store, noop } from "@endreymarcell/logical"
+import { LOCAL_STORAGE_KEY } from "../../utils/const"
 import {
   deleteTaskAndFixFocus,
   moveFocusSafely,
@@ -12,6 +13,7 @@ export type State = {
   focusedTaskIndex: number
   addingTaskAtIndex: number | null
   editingTaskAtIndex: number | null
+  latestSavedState: string
   hasUnsavedChanged: boolean
 }
 
@@ -20,6 +22,7 @@ const initialState: State = {
   focusedTaskIndex: 0,
   addingTaskAtIndex: null,
   editingTaskAtIndex: null,
+  latestSavedState: "",
   hasUnsavedChanged: true,
 }
 
@@ -34,19 +37,19 @@ const sideEffects = createSideEffects<State>()({
     noop,
   ],
   saveState: [
-    (tasks: string) => {
-      window.localStorage.setItem("10Q-saved-tasks", tasks)
-      return Promise.resolve()
+    (serializedState: string) => {
+      window.localStorage.setItem(LOCAL_STORAGE_KEY, serializedState)
+      return Promise.resolve(serializedState)
     },
-    noop,
+    (serializedState: string) => (state) => void (state.latestSavedState = serializedState),
     noop,
   ],
   loadState: [
     () => {
-      const savedTasks = window.localStorage.getItem("10Q-saved-tasks")
-      return Promise.resolve(JSON.parse(savedTasks !== null ? JSON.parse(savedTasks) : []))
+      const savedTasks = window.localStorage.getItem(LOCAL_STORAGE_KEY)
+      return Promise.resolve(savedTasks !== null ? savedTasks : "")
     },
-    (tasks: Array<string>) => (state) => void (state.tasks = tasks),
+    (tasks: string) => (state) => void (state.tasks = JSON.parse(tasks)),
     noop,
   ],
 })
