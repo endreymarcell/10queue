@@ -100,10 +100,28 @@ const logic = createLogic<State>()({
   // edit
   editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
   editFocusedTaskRequested: () => (state) => void (state.editingTaskAtIndex = state.focusedTaskIndex),
-  editingTaskEnded: () => (state) => void (state.editingTaskAtIndex = null),
+  editingTaskEnded: (currentTitle: string) => (state) => {
+    if (state.editingTaskAtIndex === null) {
+      // should not be possible but oh well
+      return
+    } else if (state.addingTaskAtIndex === state.editingTaskAtIndex) {
+      // cancelled addition
+      const newTaskIndex = state.addingTaskAtIndex
+      state.addingTaskAtIndex = null
+      state.editingTaskAtIndex = null
+      return deleteTaskAndFixFocus(state, newTaskIndex)
+    } else {
+      // valid new title
+      const adjustedNewTitle = currentTitle.trim()
+      if (adjustedNewTitle !== "") {
+        state.tasks[state.editingTaskAtIndex] = adjustedNewTitle
+        state.editingTaskAtIndex = null
+        return handleDataChange(state)
+      }
+    }
+  },
   taskTitleChanged: (index: number, newTitle: string) => (state) => {
     state.tasks[index] = newTitle
-    return handleDataChange(state)
   },
 
   // delete

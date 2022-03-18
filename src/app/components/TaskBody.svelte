@@ -9,10 +9,7 @@
   $: isEditing = $store.editingTaskAtIndex === index
 
   const onClick = () => dispatcher.focusTaskRequested(index)
-  const onInputFinish = (newValue: string) => {
-    dispatcher.taskTitleChanged(index, newValue)
-    dispatcher.editingTaskEnded()
-  }
+  const onInputFinish = (newValue: string) => dispatcher.editingTaskEnded(newValue)
   const onInputCancel = () => dispatcher.editingTaskEnded()
 </script>
 
