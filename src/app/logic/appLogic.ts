@@ -100,7 +100,7 @@ const logic = createLogic<State>()({
   // edit
   editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
   editFocusedTaskRequested: () => (state) => void (state.editingTaskAtIndex = state.focusedTaskIndex),
-  editingTaskEnded: (currentTitle: string) => (state) => {
+  editingTaskCompleted: (currentTitle: string) => (state) => {
     if (state.editingTaskAtIndex === null) {
       // should not be possible but oh well
       return
