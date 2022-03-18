@@ -48,8 +48,7 @@ const sideEffects = createSideEffects<State>()({
 
 const logic = createLogic<State>()({
   // general
-  init: () => () => sideEffects.setupAutosave(5),
-  loadPersistedState: () => () => sideEffects.loadState(),
+  init: () => () => [sideEffects.loadState(), sideEffects.setupAutosave(5)],
 
   // focus
   focusTaskRequested: (index: number) => (state) => void (state.focusedTaskIndex = index),

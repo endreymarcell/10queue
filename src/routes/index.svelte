@@ -6,7 +6,6 @@
 
   onMount(() => {
     dispatcher.init()
-    dispatcher.loadPersistedState()
   })
 </script>
 
