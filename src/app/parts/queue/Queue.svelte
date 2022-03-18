@@ -3,6 +3,7 @@
   import { store } from "../../logic/appLogic"
   import { shortcutMap } from "./queueHelpers"
   import { keyboardShortcuts } from "../../../app/actions"
+  import NewTaskRow from "../../components/NewTaskRow.svelte"
 
   $: isEditing = $store.editingTaskAtIndex !== null
 </script>
@@ -11,6 +12,9 @@
   {#each $store.tasks as _, index}
     <TaskRow {index} />
   {/each}
+  {#if $store.tasks.length < 10}
+    <NewTaskRow />
+  {/if}
 </main>
 
 <style>

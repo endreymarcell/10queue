@@ -46,7 +46,6 @@ export const sideEffects = createSideEffects<State>()({
     (serializedState: string) => (state) => {
       state.latestSavedState = serializedState
       state.hasUnsavedChanges = false
-      console.log("Marca has finished saving")
       dispatcher.checkSavedState(state)
     },
     noop,
@@ -63,7 +62,6 @@ export const sideEffects = createSideEffects<State>()({
   ],
   addDataLossWarning: [
     () => {
-      console.log("Marca: adding")
       window.addEventListener("beforeunload", beforeUnloadListener)
       return Promise.resolve()
     },
@@ -72,7 +70,6 @@ export const sideEffects = createSideEffects<State>()({
   ],
   removeDataLossWarning: [
     () => {
-      console.log("Marca: removing")
       window.removeEventListener("beforeunload", beforeUnloadListener)
       return Promise.resolve()
     },
@@ -96,6 +93,7 @@ const logic = createLogic<State>()({
   addTaskRequested: (atIndex: number) => (state) => startAddingTaskSafely(state, atIndex),
   addTaskBeforeFocusedRequested: () => (state) => startAddingTaskSafely(state, state.focusedTaskIndex),
   addTaskAfterFocusedRequested: () => (state) => startAddingTaskSafely(state, state.focusedTaskIndex + 1),
+  addTaskAtEndRequested: () => (state) => startAddingTaskSafely(state, state.tasks.length),
 
   // edit
   editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
