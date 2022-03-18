@@ -1,6 +1,7 @@
 import { createLogic, createSideEffects, Store, noop } from "@endreymarcell/logical"
 import { LOCAL_STORAGE_KEY } from "../../utils/const"
 import {
+  beforeUnloadListener,
   deleteTaskAndFixFocus,
   handleDataChange,
   moveFocusSafely,
@@ -31,7 +32,7 @@ export const store = new Store(initialState)
 
 // TODO https://github.com/endreymarcell/logical/issues/2
 // @ts-ignore
-const sideEffects = createSideEffects<State>()({
+export const sideEffects = createSideEffects<State>()({
   setupAutosave: [
     (intervalSeconds: number) => Promise.resolve(setInterval(() => dispatcher.saveRequested(), intervalSeconds * 1000)),
     noop,
@@ -44,7 +45,9 @@ const sideEffects = createSideEffects<State>()({
     },
     (serializedState: string) => (state) => {
       state.latestSavedState = serializedState
-      handleDataChange(state)
+      state.hasUnsavedChanged = false
+      console.log("Marca has finished saving")
+      dispatcher.checkSavedState(state)
     },
     noop,
   ],
@@ -55,8 +58,25 @@ const sideEffects = createSideEffects<State>()({
     },
     (tasks: string) => (state) => {
       state.tasks = JSON.parse(tasks)
-      handleDataChange(state)
     },
+    noop,
+  ],
+  addDataLossWarning: [
+    () => {
+      console.log("Marca: adding")
+      window.addEventListener("beforeunload", beforeUnloadListener)
+      return Promise.resolve()
+    },
+    noop,
+    noop,
+  ],
+  removeDataLossWarning: [
+    () => {
+      console.log("Marca: removing")
+      window.removeEventListener("beforeunload", beforeUnloadListener)
+      return Promise.resolve()
+    },
+    noop,
     noop,
   ],
 })
@@ -83,7 +103,7 @@ const logic = createLogic<State>()({
   editingTaskFinished: () => (state) => void (state.editingTaskAtIndex = null),
   taskTitleChanged: (index: number, newTitle: string) => (state) => {
     state.tasks[index] = newTitle
-    handleDataChange(state)
+    return handleDataChange(state)
   },
 
   // delete
@@ -106,6 +126,9 @@ const logic = createLogic<State>()({
   // persistance
   saveRequested: () => (state) => state.hasUnsavedChanged ? sideEffects.saveState(serializeState(state)) : null,
   loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
+  // TODO huh, ouch
+  checkSavedState: (state) => () =>
+    state.hasUnsavedChanged ? sideEffects.addDataLossWarning() : sideEffects.removeDataLossWarning(),
 })
 
 // TODO https://github.com/endreymarcell/logical/issues/2
