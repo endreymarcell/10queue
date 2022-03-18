@@ -42,5 +42,6 @@
     padding: 0;
     background-color: transparent;
     font-size: 1rem;
+    width: 100%;
   }
 </style>
