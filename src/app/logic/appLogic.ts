@@ -25,6 +25,8 @@ const initialState: State = {
 
 export const store = new Store(initialState)
 
+// TODO https://github.com/endreymarcell/logical/issues/2
+// @ts-ignore
 const sideEffects = createSideEffects<State>()({
   setupAutosave: [
     (intervalSeconds: number) => Promise.resolve(setInterval(() => dispatcher.saveRequested(), intervalSeconds * 1000)),
@@ -40,12 +42,17 @@ const sideEffects = createSideEffects<State>()({
     noop,
   ],
   loadState: [
-    () => Promise.resolve(JSON.parse(window.localStorage.getItem("10Q-saved-tasks")) ?? []),
+    () => {
+      const savedTasks = window.localStorage.getItem("10Q-saved-tasks")
+      return Promise.resolve(JSON.parse(savedTasks !== null ? JSON.parse(savedTasks) : []))
+    },
     (tasks: Array<string>) => (state) => void (state.tasks = tasks),
     noop,
   ],
 })
 
+// TODO https://github.com/endreymarcell/logical/issues/2
+// @ts-ignore
 const logic = createLogic<State>()({
   // general
   init: () => () => [sideEffects.loadState(), sideEffects.setupAutosave(5)],
@@ -88,4 +95,6 @@ const logic = createLogic<State>()({
   loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
 })
 
+// TODO https://github.com/endreymarcell/logical/issues/2
+// @ts-ignore
 export const dispatcher = store.getDispatcher()(logic, sideEffects)
