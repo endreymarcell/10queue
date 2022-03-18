@@ -100,7 +100,7 @@ const logic = createLogic<State>()({
   // edit
   editTaskClicked: (index: number) => (state) => void (state.editingTaskAtIndex = index),
   editFocusedTaskRequested: () => (state) => void (state.editingTaskAtIndex = state.focusedTaskIndex),
-  editingTaskFinished: () => (state) => void (state.editingTaskAtIndex = null),
+  editingTaskEnded: () => (state) => void (state.editingTaskAtIndex = null),
   taskTitleChanged: (index: number, newTitle: string) => (state) => {
     state.tasks[index] = newTitle
     return handleDataChange(state)
