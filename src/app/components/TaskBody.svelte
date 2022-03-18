@@ -10,7 +10,7 @@
 
   const onClick = () => dispatcher.focusTaskRequested(index)
   const onInputFinish = (newValue: string) => dispatcher.editingTaskCompleted(newValue)
-  const onInputCancel = () => dispatcher.editingTaskCompleted()
+  const onInputCancel = () => dispatcher.editingTaskCancelled()
 </script>
 
 <div class="task-body" class:focused={isFocused} on:click={onClick}>
