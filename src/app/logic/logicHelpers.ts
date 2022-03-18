@@ -26,10 +26,13 @@ export function startAddingTaskSafely(state: State, index: number) {
   if (state.tasks.length === 10) {
     return
   }
-  state.tasks.splice(index, 0, "")
-  state.addingTaskAtIndex = index
-  state.editingTaskAtIndex = index
-  state.focusedTaskIndex = index
+
+  const safeIndex = state.tasks.length === 0 ? 0 : index
+
+  state.tasks.splice(safeIndex, 0, "")
+  state.addingTaskAtIndex = safeIndex
+  state.editingTaskAtIndex = safeIndex
+  state.focusedTaskIndex = safeIndex
 }
 
 export function serializeState(state: State) {
