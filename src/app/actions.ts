@@ -13,9 +13,16 @@ export function onTextInputFinish(node: HTMLInputElement, onFinish: (newValue: s
       onFinish(node.value)
     }
   }
+  const onBlur = () => onFinish(node.value)
+
   node.addEventListener("keydown", onKeyDown)
+  node.addEventListener("blur", onBlur)
+
   return {
-    destroy: () => node.removeEventListener("keydown", onKeyDown),
+    destroy: () => {
+      node.removeEventListener("keydown", onKeyDown)
+      node.removeEventListener("blur", onBlur)
+    },
   }
 }
 
@@ -25,13 +32,10 @@ export function onTextInputCancel(node: HTMLInputElement, onCancel: () => void) 
       onCancel()
     }
   }
-  const onBlur = () => onCancel()
   node.addEventListener("keydown", onKeyDown)
-  node.addEventListener("blur", onBlur)
   return {
     destroy: () => {
       node.removeEventListener("keydown", onKeyDown)
-      node.removeEventListener("blur", onBlur)
     },
   }
 }
