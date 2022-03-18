@@ -103,14 +103,24 @@ const logic = createLogic<State>()({
       throw new Error("editingTaskCompleted called without editingTaskAtIndex")
     }
 
+    const copyOfIndex = state.editingTaskAtIndex
+    const isAddingTask = state.addingTaskAtIndex !== null
     const adjustedNewTitle = currentTitle.trim()
-    if (adjustedNewTitle !== "") {
-      state.tasks[state.editingTaskAtIndex] = adjustedNewTitle
-      state.editingTaskAtIndex = null
-      return handleDataChange(state)
+
+    if (adjustedNewTitle === "") {
+      if (isAddingTask) {
+        state.addingTaskAtIndex = null
+        state.editingTaskAtIndex = null
+        return deleteTaskAndFixFocus(state, copyOfIndex)
+      } else {
+        // intentional noop: don't let the user save an empty task
+        return
+      }
     } else {
-      // intentional noop: don't let the user save an empty task
-      return
+      state.addingTaskAtIndex = null
+      state.editingTaskAtIndex = null
+      state.tasks[copyOfIndex] = adjustedNewTitle
+      return handleDataChange(state)
     }
   },
   editingTaskCancelled: () => (state) => {
