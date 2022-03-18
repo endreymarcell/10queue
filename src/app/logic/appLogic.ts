@@ -16,7 +16,7 @@ export type State = {
   addingTaskAtIndex: number | null
   editingTaskAtIndex: number | null
   latestSavedState: string
-  hasUnsavedChanged: boolean
+  hasUnsavedChanges: boolean
 }
 
 const initialState: State = {
@@ -25,7 +25,7 @@ const initialState: State = {
   addingTaskAtIndex: null,
   editingTaskAtIndex: null,
   latestSavedState: "",
-  hasUnsavedChanged: false,
+  hasUnsavedChanges: false,
 }
 
 export const store = new Store(initialState)
@@ -45,7 +45,7 @@ export const sideEffects = createSideEffects<State>()({
     },
     (serializedState: string) => (state) => {
       state.latestSavedState = serializedState
-      state.hasUnsavedChanged = false
+      state.hasUnsavedChanges = false
       console.log("Marca has finished saving")
       dispatcher.checkSavedState(state)
     },
@@ -124,11 +124,11 @@ const logic = createLogic<State>()({
   },
 
   // persistance
-  saveRequested: () => (state) => state.hasUnsavedChanged ? sideEffects.saveState(serializeState(state)) : null,
+  saveRequested: () => (state) => state.hasUnsavedChanges ? sideEffects.saveState(serializeState(state)) : null,
   loadCompleted: (tasks: Array<string>) => (state) => void (state.tasks = tasks),
   // TODO huh, ouch
   checkSavedState: (state) => () =>
-    state.hasUnsavedChanged ? sideEffects.addDataLossWarning() : sideEffects.removeDataLossWarning(),
+    state.hasUnsavedChanges ? sideEffects.addDataLossWarning() : sideEffects.removeDataLossWarning(),
 })
 
 // TODO https://github.com/endreymarcell/logical/issues/2

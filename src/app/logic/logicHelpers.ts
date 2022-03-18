@@ -45,8 +45,8 @@ export function serializeState(state: State) {
 
 export function handleDataChange(state: State) {
   const serializedCurrentState = JSON.stringify(state.tasks)
-  state.hasUnsavedChanged = state.latestSavedState !== serializedCurrentState
-  return state.hasUnsavedChanged ? sideEffects.addDataLossWarning() : sideEffects.removeDataLossWarning()
+  state.hasUnsavedChanges = state.latestSavedState !== serializedCurrentState
+  return state.hasUnsavedChanges ? sideEffects.addDataLossWarning() : sideEffects.removeDataLossWarning()
 }
 
 export function beforeUnloadListener(event: BeforeUnloadEvent) {

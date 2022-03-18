@@ -14,7 +14,7 @@
 </svelte:head>
 
 <div id="body">
-  <h1>Task queue{$store.hasUnsavedChanged ? "*" : ""}</h1>
+  <h1>Task queue{$store.hasUnsavedChanges ? "*" : ""}</h1>
   <Queue />
 </div>
 
