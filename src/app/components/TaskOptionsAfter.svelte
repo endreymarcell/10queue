@@ -40,10 +40,10 @@
     align-self: stretch;
 
     opacity: 0.05;
-    transition: opacity 0.05s;
+    transition: all 0.05s;
   }
 
   .option:hover {
-    color: red;
+    opacity: 1;
   }
 </style>
