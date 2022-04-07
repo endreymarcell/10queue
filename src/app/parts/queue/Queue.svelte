@@ -4,6 +4,7 @@
   import { shortcutMap } from "./queueHelpers"
   import { keyboardShortcuts } from "../../../app/actions"
   import NewTaskRow from "../../components/NewTaskRow.svelte"
+  import CreateTaskButton from "../../components/CreateTaskButton.svelte"
 
   $: isEditing = $store.editingTaskAtIndex !== null
 </script>
@@ -15,6 +16,7 @@
   {#if $store.tasks.length < 10}
     <NewTaskRow />
   {/if}
+  <CreateTaskButton />
 </main>
 
 <style>
